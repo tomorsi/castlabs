@@ -1,0 +1,10 @@
+
+#include "containerbox.h"
+
+use castlabs;
+
+ContainerBox::ContainerBox(std::string type, ifstream& ifs)
+{
+
+}
+
