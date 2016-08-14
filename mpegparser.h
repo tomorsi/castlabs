@@ -1,6 +1,10 @@
 #ifndef __MPEG_PARSER_H__
 #define __MPEG_PARSER_H__
 
+#include "box.h"
+#include "containerbox.h"
+#include "mdatbox.h"
+
 namespace castlabs {
 
 
@@ -10,20 +14,20 @@ class MpegParser
  private:
   const std::string& m_filepath;
 
-  std::unique_ptr<ifstream> m_ifstream;
+  std::ifstream m_ifstream;
 
   // This method cracks out the different Box types, and dispatches
   // to specific handlers for derived Box types. In our implementation
   // we only have a need to handle the MDAT type and the Container types
   // specifically. 
-  std::shared_ptr<Box> void HandleBox(std::string type);
+  void  void NextBox(void);
 
   // Overloaded HandleBox method for MDAT that needs to display
   // the xml and crack out the u64 encoded images. 
-  void HandleBox(std::shared_ptr<MdatBox> mdatbox);
+  void HandleBox(MdatBox& mdatbox);
 
   // Handles the two container Box Type of MOOF and TRAF.
-  void HandleBox(std::shared_ptr<ContainerBox> containerbox);
+  void HandleBox(ContainerBox& containerbox);
 
 
  public:
@@ -35,3 +39,5 @@ class MpegParser
 };
 
 }
+
+#endif

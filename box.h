@@ -1,6 +1,9 @@
 #ifndef __BOX__H_
 #define __BOX__H_
 
+#include <string>
+#include <fstream>
+
 namespace castlabs {
 
 class Box
@@ -11,9 +14,11 @@ class Box
 
 
  public:
-  Box(std::string type, ifstream& ifs);
+  Box(std::ifstream& ifs);
 
 };
 
 
 }
+
+#endif

@@ -1,14 +1,11 @@
-#ifndef __MDATBOX__H_
-#define __MDATBOX__H_
 
-namespace castlabs {
+#include "mdatbox.h"
 
-class MdatBox
+using namespace castlabs;
+
+MdatBox::MdatBox(std::string type, std::ifstream& ifs)
+    :Box(type,ifs)
 {
 
- public:
-  MdatBox(ifstream& ifs);
-
-};
-
 }
+

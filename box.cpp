@@ -1,14 +1,10 @@
 
 #include "box.h"
 
-use castlabs;
+using namespace castlabs;
 
-Box::Box(std::string type, ifstream& ifs)
-    : m_boxtype(type)
+Box::Box(std::ifstream& ifs)
 {
-    unsigned char s[3];
-    ifstream.read(s,3);
-    m_length = (s[0]<<16) | (s[1]<<8) | s[2]; 
 }
 
 

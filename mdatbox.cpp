@@ -1,7 +1,10 @@
 
 #include "mdatbox.h"
 
-MdatBox::MdatBox(ifstream& ifs)
+using namespace castlabs;
+
+MdatBox::MdatBox(std::ifstream& ifs)
+    :Box(ifs)
 {
 
 }
