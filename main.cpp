@@ -34,10 +34,12 @@ int main(int argc, char *argv[])
     } 
     catch (std::exception& e)
     {
+	std::cout << "exception: " << std::endl;
 	exitcode = -1;
     }
     catch (MpegParserException &e)
     {
+	std::cout << "MpegParserException: " << std::endl;
 	exitcode = -2;
     }
 

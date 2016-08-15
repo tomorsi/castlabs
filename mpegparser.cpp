@@ -1,5 +1,7 @@
 #include <memory>
 #include <fstream>
+#include <iostream>
+
 #include "mpegparser.h"
 
 using namespace castlabs;
@@ -10,6 +12,8 @@ using namespace castlabs;
 // specifically. 
 void MpegParser::NextBox(int length, std::string type)
 {
+    std::cout << "length: " << length << " type: " << type << std::endl;
+
     if (type == "mdat")
     {
 	MdatBox box(length, type, m_ifstream);
@@ -32,7 +36,7 @@ void MpegParser::NextBox(int length, std::string type)
 // the xml and crack out the u64 encoded images. 
 void MpegParser::HandleBox(MdatBox& box)
 {
-    // std::cout << box << std::endl;
+    std::cout << box << std::endl;
 }
 
 // Handles the two container Box Type of MOOF and TRAF.
@@ -56,21 +60,20 @@ MpegParser::MpegParser(const std::string& filepath)
     {
 	throw std::invalid_argument("couldn't open file: " + m_filepath);
     }
-
-    
 } 
-
-
   
 // Start the parser if a parsing exception occurs
 // this method will throw an exception.
 void MpegParser::Parse(void)
 {
+    std::cout << "parse" << std::endl;
+
     int length = readlength();
     std::string type = readtype();
 
     while (m_ifstream.good())
     {
+	std::cout << "reading next" << std::endl;
 	NextBox(length,type);
 
 	length = readlength();

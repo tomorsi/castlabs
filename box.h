@@ -19,6 +19,8 @@ class Box
 
   size_t length(void) { return m_length; }
 
+  friend std::ostream& operator<<(std::ostream& ostrm, Box& box);
+
 };
 
 
