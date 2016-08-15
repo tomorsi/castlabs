@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-namespace castlab {
+namespace castlabs {
 
 // The base class exception only tracks
 // the position in the stream that was 

@@ -1,7 +1,7 @@
 
 #include "mpegparserexception.h"
 
-namespace castlab {
+namespace castlabs {
 
 MpegParserException::MpegParserException(std::ifstream& s)
     :m_streampos(s.tellg())
