@@ -6,6 +6,17 @@
 
 using namespace castlabs;
 
+MpegParser::MpegParser(const std::string& filepath)
+    :m_filepath(filepath)
+{
+    m_ifstream.open(m_filepath, std::ifstream::in);
+    if (!m_ifstream)
+    {
+	throw std::invalid_argument("couldn't open file: " + m_filepath);
+    }
+} 
+  
+
 // This method cracks out the different Box types, and dispatches
 // to specific handlers for derived Box types. In our implementation
 // we only have a need to handle the MDAT type and the Container types
@@ -52,16 +63,6 @@ void MpegParser::HandleBox(ContainerBox& box)
     }
 }
 
-MpegParser::MpegParser(const std::string& filepath)
-    :m_filepath(filepath)
-{
-    m_ifstream.open(m_filepath, std::ifstream::in|std::ifstream::binary);
-    if (!m_ifstream)
-    {
-	throw std::invalid_argument("couldn't open file: " + m_filepath);
-    }
-} 
-  
 // Start the parser if a parsing exception occurs
 // this method will throw an exception.
 void MpegParser::Parse(void)
@@ -83,17 +84,24 @@ void MpegParser::Parse(void)
 
 int MpegParser::readlength(void)
 {
-    char lenbuf[4];
-    m_ifstream.read(lenbuf,4);
+    unsigned char lenbuf[4];
+    m_ifstream.read((char*)lenbuf,4);
     int length = (lenbuf[0]<<24) | (lenbuf[1]<<16) | 
-	(lenbuf[2]<<8) | (lenbuf[3]); 
+    	(lenbuf[2]<<8) | (lenbuf[3]); 
+    //unsigned int *length = (unsigned int*)lenbuf;
+    std::cout << "readlength: " << length << std::endl;
+    std::cout << std::hex << (int)lenbuf[0] << ":" 
+	      << std::hex << (int)lenbuf[1] << ":" 
+	      << std::hex << (int)lenbuf[2] << ":" 
+	      << std::hex <<(int)lenbuf[3] << std::endl;
+
     return length;
 }
 
 std::string MpegParser::readtype(void)
 {
-    char typebuf[3];
-    m_ifstream.read(typebuf,3);
-    std::string type = std::string(typebuf,3);
+    char typebuf[4];
+    m_ifstream.read(typebuf,4);
+    std::string type = std::string(typebuf,4);
     return type;
 }

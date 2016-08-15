@@ -17,6 +17,10 @@ class Box
  public:
   Box(int length, std::string type, std::ifstream& ifs);
 
+  void readData(std::ifstream& ifs);
+
+  virtual void parseData(unsigned char *buffer);
+
   size_t length(void) { return m_length; }
 
   friend std::ostream& operator<<(std::ostream& ostrm, Box& box);
