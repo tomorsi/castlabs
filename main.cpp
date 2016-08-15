@@ -43,5 +43,7 @@ int main(int argc, char *argv[])
 	exitcode = -2;
     }
 
+    std::cout << "done" << std::endl;
+
     return exitcode;
 }

@@ -15,11 +15,15 @@ class Box
 
 
  public:
+  // The size of the type and length in the 
+  // file this need is dependent on the file structure. 
+  static const int HEADERLENGTH = 8;
+
   Box(int length, std::string type, std::ifstream& ifs);
 
-  void readData(std::ifstream& ifs);
+  void read(std::ifstream& ifs);
 
-  virtual void parseData(unsigned char *buffer);
+  virtual void unmarshal(unsigned char *buffer);
 
   size_t length(void) { return m_length; }
 

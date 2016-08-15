@@ -38,7 +38,10 @@ void MpegParser::NextBox(int length, std::string type)
     }
     else
     {
-	// general box handler. 
+	// general box handler, throw away anything we are
+	// not interested in including just seeking over the 
+	// bytes in the file. 
+	m_ifstream.seekg(length, std::ios_base::cur);
     }
 
 }
@@ -57,10 +60,21 @@ void MpegParser::HandleBox(ContainerBox& box)
     while (len > 0)
     {
 	int childlen = readlength();
+	if (childlen < 0)
+	    break;
+
 	std::string childtype = readtype();
+
 	NextBox(childlen, childtype);
-	len -= childlen;
+	len = len - Box::HEADERLENGTH - childlen;
+
+	std::cout << "processed: " << childtype 
+		  << " remaining length: " << len
+		  << " current child length: " << childlen
+		  << std::endl;
     }
+
+    std::cout << "HandleContainer Exit" << std::endl;
 }
 
 // Start the parser if a parsing exception occurs
@@ -70,9 +84,12 @@ void MpegParser::Parse(void)
     std::cout << "parse" << std::endl;
 
     int length = readlength();
+    if (length < 0 ) 
+	return;
+
     std::string type = readtype();
 
-    while (m_ifstream.good())
+    while (length > 0)
     {
 	std::cout << "reading next" << std::endl;
 	NextBox(length,type);
@@ -88,14 +105,11 @@ int MpegParser::readlength(void)
     m_ifstream.read((char*)lenbuf,4);
     int length = (lenbuf[0]<<24) | (lenbuf[1]<<16) | 
     	(lenbuf[2]<<8) | (lenbuf[3]); 
-    //unsigned int *length = (unsigned int*)lenbuf;
-    std::cout << "readlength: " << length << std::endl;
-    std::cout << std::hex << (int)lenbuf[0] << ":" 
-	      << std::hex << (int)lenbuf[1] << ":" 
-	      << std::hex << (int)lenbuf[2] << ":" 
-	      << std::hex <<(int)lenbuf[3] << std::endl;
 
-    return length;
+    if (m_ifstream.eof())
+	length = -1;
+
+    return length - Box::HEADERLENGTH;
 }
 
 std::string MpegParser::readtype(void)

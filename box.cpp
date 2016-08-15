@@ -18,16 +18,16 @@ Box::Box(int length, std::string type, std::ifstream& ifs)
 {
 }
 
-void Box::readData(std::ifstream& ifs)
+void Box::read(std::ifstream& ifs)
 {
     std::unique_ptr<unsigned char> buffer(new unsigned char[m_length]);
 
     ifs.read((char*)buffer.get(),m_length);
 
-    parseData(buffer.get());
+    unmarshal(buffer.get());
 }
 
-void Box::parseData(unsigned char* buffer)
+void Box::unmarshal(unsigned char* buffer)
 {
 }
 
