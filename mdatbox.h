@@ -9,7 +9,7 @@ namespace castlabs {
 {
 
  public:
-  MdatBox(std::ifstream& ifs);
+  MdatBox(int length, std::string boxtype, std::ifstream& ifs);
 
 };
 

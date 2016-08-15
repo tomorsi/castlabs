@@ -1,6 +1,8 @@
 #ifndef __MPEG_PARSER_EXCEPTION__
 #define __MPEG_PARSER_EXCEPTION__
 
+#include <fstream>
+
 namespace castlab {
 
 // The base class exception only tracks
@@ -9,10 +11,10 @@ namespace castlab {
 class MpegParserException
 {
  protected:
-  const streampos &m_streampos;
+  const std::streampos m_streampos;
 
  public:
-  MpegParserException(istream& s);
+  MpegParserException(std::ifstream& s);
 };
 
 }

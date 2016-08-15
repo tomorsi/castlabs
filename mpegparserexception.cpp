@@ -3,7 +3,7 @@
 
 namespace castlab {
 
-MpegParserException::MpegParserException(istream& s)
+MpegParserException::MpegParserException(std::ifstream& s)
     :m_streampos(s.tellg())
 {
 

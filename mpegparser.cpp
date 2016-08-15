@@ -13,13 +13,13 @@ void MpegParser::NextBox(int length, std::string type)
     if (type == "mdat")
     {
 	MdatBox box(length, type, m_ifstream);
-	Handle(box);
+	HandleBox(box);
 
     }
     else if (type == "moof" || type == "traf")
     {
 	ContainerBox box(length, type, m_ifstream);
-	Handle(box);
+	HandleBox(box);
     }
     else
     {
@@ -32,19 +32,19 @@ void MpegParser::NextBox(int length, std::string type)
 // the xml and crack out the u64 encoded images. 
 void MpegParser::HandleBox(MdatBox& box)
 {
-	std::cout << box << std::endl;
+    // std::cout << box << std::endl;
 }
 
 // Handles the two container Box Type of MOOF and TRAF.
 void MpegParser::HandleBox(ContainerBox& box)
 {
     int len = box.length();
-    while (length > 0)
+    while (len > 0)
     {
 	int childlen = readlength();
 	std::string childtype = readtype();
-	NextBox(childen, childtype);
-	length -= childen;
+	NextBox(childlen, childtype);
+	len -= childlen;
     }
 }
 
@@ -81,7 +81,7 @@ void MpegParser::Parse(void)
 int MpegParser::readlength(void)
 {
     char lenbuf[4];
-    ifs.read(lenbuf,4);
+    m_ifstream.read(lenbuf,4);
     int length = (lenbuf[0]<<24) | (lenbuf[1]<<16) | 
 	(lenbuf[2]<<8) | (lenbuf[3]); 
     return length;
@@ -90,7 +90,7 @@ int MpegParser::readlength(void)
 std::string MpegParser::readtype(void)
 {
     char typebuf[3];
-    ifs.read(typebuf,3);
+    m_ifstream.read(typebuf,3);
     std::string type = std::string(typebuf,3);
     return type;
 }

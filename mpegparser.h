@@ -20,7 +20,7 @@ class MpegParser
   // to specific handlers for derived Box types. In our implementation
   // we only have a need to handle the MDAT type and the Container types
   // specifically. 
-  void  void NextBox(void);
+  void  NextBox(int length, std::string type);
 
   // Overloaded HandleBox method for MDAT that needs to display
   // the xml and crack out the u64 encoded images. 
@@ -29,6 +29,8 @@ class MpegParser
   // Handles the two container Box Type of MOOF and TRAF.
   void HandleBox(ContainerBox& containerbox);
 
+  int readlength(void);
+  std::string readtype(void);
 
  public:
   MpegParser(const std::string& filepath); 

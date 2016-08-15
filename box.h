@@ -1,3 +1,4 @@
+
 #ifndef __BOX__H_
 #define __BOX__H_
 
@@ -14,7 +15,9 @@ class Box
 
 
  public:
-  Box(std::ifstream& ifs);
+  Box(int length, std::string type, std::ifstream& ifs);
+
+  size_t length(void) { return m_length; }
 
 };
 

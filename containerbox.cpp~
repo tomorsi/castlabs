@@ -3,8 +3,8 @@
 
 using namespace castlabs;
 
-ContainerBox::ContainerBox(std::string type, std::ifstream& ifs)
-    :Box(type,ifs)
+ContainerBox::ContainerBox(length, type, std::ifstream& ifs)
+    :Box(length, type, ifs)
 {
 
 }

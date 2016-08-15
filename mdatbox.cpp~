@@ -3,8 +3,8 @@
 
 using namespace castlabs;
 
-MdatBox::MdatBox(std::string type, std::ifstream& ifs)
-    :Box(type,ifs)
+MdatBox::MdatBox(std::ifstream& ifs)
+    :Box(ifs)
 {
 
 }
