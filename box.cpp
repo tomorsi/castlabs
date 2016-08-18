@@ -9,7 +9,7 @@ std::ostream& operator<<(std::ostream& ostrm, Box& box)
     ostrm << "[" << "Box" << "]" << std::endl;
     ostrm << "length: " << box.m_length << std::endl;
     ostrm << "type: " << box.m_boxtype << std::endl;
-
+    ostrm << "xml: " << box.m_xmldoc << std::endl;
     return ostrm;
 }
 
@@ -24,11 +24,12 @@ void Box::read(std::ifstream& ifs)
 
     ifs.read((char*)buffer.get(),m_length);
 
-    unmarshal(buffer.get());
+    unmarshal(buffer.get(), m_length);
 }
 
-void Box::unmarshal(unsigned char* buffer)
+void Box::unmarshal(unsigned char* buffer, int length)
 {
+    m_xmldoc.assign((char*)buffer,length);
 }
 
 

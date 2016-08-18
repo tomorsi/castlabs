@@ -12,7 +12,7 @@ class Box
  protected:
   const std::string m_boxtype;
   size_t m_length;
-
+  std::string m_xmldoc;
 
  public:
   // The size of the type and length in the 
@@ -23,7 +23,7 @@ class Box
 
   void read(std::ifstream& ifs);
 
-  virtual void unmarshal(unsigned char *buffer);
+  virtual void unmarshal(unsigned char *buffer, int length);
 
   size_t length(void) { return m_length; }
 

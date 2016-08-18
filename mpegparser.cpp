@@ -28,12 +28,14 @@ void MpegParser::NextBox(int length, std::string type)
     if (type == "mdat")
     {
 	MdatBox box(length, type, m_ifstream);
+	box.read(m_ifstream);
 	HandleBox(box);
 
     }
     else if (type == "moof" || type == "traf")
     {
 	ContainerBox box(length, type, m_ifstream);
+	box.read(m_ifstream);
 	HandleBox(box);
     }
     else
@@ -56,6 +58,7 @@ void MpegParser::HandleBox(MdatBox& box)
 // Handles the two container Box Type of MOOF and TRAF.
 void MpegParser::HandleBox(ContainerBox& box)
 {
+
     int len = box.length();
     while (len > 0)
     {
@@ -95,19 +98,29 @@ void MpegParser::Parse(void)
 	NextBox(length,type);
 
 	length = readlength();
+
+	std::cout << "readlength(): " << length << std::endl;
+
+	if (length <= 0)
+	    break;
+
 	type = readtype();
     }
 }
 
 int MpegParser::readlength(void)
 {
+    int curpos = m_ifstream.tellg();
+
+    std::cout << "current position: " << curpos << std::endl;
+
     unsigned char lenbuf[4];
     m_ifstream.read((char*)lenbuf,4);
     int length = (lenbuf[0]<<24) | (lenbuf[1]<<16) | 
     	(lenbuf[2]<<8) | (lenbuf[3]); 
 
-    if (m_ifstream.eof())
-	length = -1;
+    if (m_ifstream.eof() || !m_ifstream)
+	return -1;
 
     return length - Box::HEADERLENGTH;
 }
