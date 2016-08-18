@@ -17,6 +17,18 @@ class MpegParserException
   MpegParserException(std::ifstream& s);
 };
 
+class XmlMdatParserException
+{
+ protected:
+  const std::string m_description;
+  int m_row;
+  int m_column;
+
+ public:
+  XmlMdatParserException(const char *description, int row, int column);
+
+};
+
 }
 #endif 
 
