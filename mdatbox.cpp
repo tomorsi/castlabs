@@ -12,7 +12,7 @@ namespace castlabs {
 // This should really be built into std::string.
 static std::string tolower(std::string s)
 {
-    std::transform(s.end(),s.begin(),s.end(),::tolower);
+    std::transform(s.begin(),s.end(),s.begin(),::tolower);
     return s;
 }
 
@@ -44,13 +44,12 @@ MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
 
 void MdatBox::writeimagefile(std::string fn, std::string type, std::string data)
 {
-    std::ofstream ofs(fn, std::ios_base::binary);
-    ofs.open(fn);
+    std::ofstream ofs(tolower(fn)+"."+tolower(type), std::ios_base::binary);
     if (!ofs.is_open())
     {
 	throw std::invalid_argument("couldn't open file: " + fn);
     }
-    ofs << data;
+    ofs.write(data.c_str(),data.length());
     ofs.close();
 }
 
@@ -94,25 +93,30 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
 	std::string encoding;
 	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEENCODEDATTR, &encoding))
 	{
-	    std::locale loc;
-	    // if we are not base64 encoded skip this image, probably should log. 
-	    if (tolower(encoding) == XMLIMAGEENCODEDATTRVALUE)
-	    {
-		std::string text = element->GetText();
-		writeimagefile(fn, type, text);
-	    }
-	    else
-	    {
-		// log a warning and go on to the next possible image. 
-	    }
+	    throw XmlMdatParserException("encoding attribute not found", element->Row(), element->Column());
 	}
-	element = element->NextSiblingElement(XMLIMAGEELEMENT);
+
+	std::cout << "a" << std::endl;
+	// if we are not base64 encoded skip this image, probably should log. 
+	if (tolower(encoding) == XMLIMAGEENCODEDATTRVALUE)
+	{
+	    std::cout << "b" << std::endl;
+	    std::string text = element->GetText();
+	    std::cout << "text: " << text << std::endl;
+	    writeimagefile(fn, type, text);
+	}
+	else
+	{
+	    throw XmlMdatParserException("image encoding is not base64", element->Row(), element->Column());
+	}
+	std::cout << "c" << std::endl;
+    	element = element->NextSiblingElement(XMLIMAGEELEMENT);
     }
 }
 
 const char *MdatBox::XMLIMAGEELEMENT = "smpte:image";
 const char *MdatBox::XMLIMAGEIDATTR = "xml:id";
-const char *MdatBox::XMLIMAGETYPEATTR = "xml:imagetype";
-const char *MdatBox::XMLIMAGEENCODEDATTR = "xml:encoding";
+const char *MdatBox::XMLIMAGETYPEATTR = "imagetype";
+const char *MdatBox::XMLIMAGEENCODEDATTR = "encoding";
 const char *MdatBox::XMLIMAGEENCODEDATTRVALUE = "base64";
 }

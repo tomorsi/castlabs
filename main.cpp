@@ -42,6 +42,11 @@ int main(int argc, char *argv[])
 	std::cout << "MpegParserException: " << std::endl;
 	exitcode = -2;
     }
+    catch (XmlMdatParserException &e)
+    {
+	std::cout << "MdatXmlParserException: " << std::endl;
+	exitcode = -2;
+    }
 
     std::cout << "done" << std::endl;
 
