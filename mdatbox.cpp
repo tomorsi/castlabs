@@ -1,11 +1,20 @@
 
 #include <iostream>
+#include <locale>
+#include <fstream>
 
 #include "tinyxml.h"
 #include "mdatbox.h"
 #include "mpegparserexception.h"
 
 namespace castlabs {
+
+// This should really be built into std::string.
+static std::string tolower(std::string s)
+{
+    std::transform(s.end(),s.begin(),s.end(),::tolower);
+    return s;
+}
 
 MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
     :Box(length, type, ifs)
@@ -14,7 +23,14 @@ MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
 
 void MdatBox::writeimagefile(std::string fn, std::string type, std::string data)
 {
-
+    std::ofstream ofs(fn);
+    ofs.open(fn);
+    if (!ofs.is_open())
+    {
+	throw std::invalid_argument("couldn't open file: " + fn);
+    }
+    ofs << data;
+    ofs.close();
 }
 
 // We employ tinyxml which is basically 4 source files and
@@ -40,12 +56,12 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
     // Document is a Node but not a element so its impracticle
     // to use the NoChildren method, because I need Elements 
     // int he for-loop.
-    TiXmlElement *elment = document.FirstChildElement();
+    TiXmlElement *element = document.FirstChildElement();
     while (element)
     {
-	if (element.ValueStr() == XMLIMAGEELEMENT)
+	if (element->ValueStr() == XMLIMAGEELEMENT)
 	    break;
-	elment = elment.FirstChildElement();
+	element = element->FirstChildElement();
     }
 
     // Found images. 
@@ -60,10 +76,11 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
 	{
 	}
 	std::string encoding;
-	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEENCODEATTR, &encoding))
+	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEENCODEDATTR, &encoding))
 	{
+	    std::locale loc;
 	    // if we are not base64 encoded skip this image, probably should log. 
-	    if (std::tolower(encoding) == XMLENCODEDATTRVALUE)
+	    if (tolower(encoding) == XMLIMAGEENCODEDATTRVALUE)
 	    {
 		std::string text = element->GetText();
 		writeimagefile(fn, type, text);
@@ -75,12 +92,11 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
 	}
 	element = element->NextSiblingElement(XMLIMAGEELEMENT);
     }
-
 }
 
-const std::string MdatBox::XMLIMAGEELEMNT = "smpte:image";
-const std::string MdatBox::XMLIMAGEIDATTR = "xml:id";
-const std::string MdatBox::XMLIMAGETYPEATTR = "xml:imagetype";
-const std::string MdatBox::XMLENCODEDATTR = "xml:encoding";
-const std::string MdatBox::XMLENCODEDATTRVALUE = "base64";
+const char *MdatBox::XMLIMAGEELEMENT = "smpte:image";
+const char *MdatBox::XMLIMAGEIDATTR = "xml:id";
+const char *MdatBox::XMLIMAGETYPEATTR = "xml:imagetype";
+const char *MdatBox::XMLIMAGEENCODEDATTR = "xml:encoding";
+const char *MdatBox::XMLIMAGEENCODEDATTRVALUE = "base64";
 }

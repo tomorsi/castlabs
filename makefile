@@ -6,7 +6,7 @@ mpegparser : ${OBJS}
 	g++ -std=c++11 -o bin/mpegparser ${OBJS}
 
 obj/%.o : %.cpp
-	g++ -c -std=c++11 $< -o $@
+	g++ -c -DTIXML_USE_STL -std=c++11 $< -o $@
 
 linecount:
 	wc -l *.cpp *.h makefile

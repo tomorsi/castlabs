@@ -9,11 +9,11 @@ class MdatBox : public Box
 {
 
  private:
-  const static std::string XMLIMAGEELEMNT;
-  const static std::string XMLIMAGEFILENAMEATTR;
-  const static std::string XMLIMAGETYPEATTR;
-  const static std::string XMLIMAGEENCODEDATTR;
-  const static std::string XMLIMAGEENCODEDATTRVALUE;
+  static const char *XMLIMAGEELEMENT;
+  static const char *XMLIMAGEIDATTR;
+  static const char *XMLIMAGETYPEATTR;
+  static const char *XMLIMAGEENCODEDATTR;
+  static const char *XMLIMAGEENCODEDATTRVALUE;
 
  public:
   MdatBox(int length, std::string boxtype, std::ifstream& ifs);
