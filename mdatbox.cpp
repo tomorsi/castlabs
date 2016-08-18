@@ -16,6 +16,27 @@ static std::string tolower(std::string s)
     return s;
 }
 
+static TiXmlElement* FindElement(std::string name, TiXmlElement* cur)
+{
+    TiXmlElement *result = nullptr;
+
+    std::cout << "current element: " << cur->Value() << std::endl;
+    
+    
+    if (cur->ValueStr()==name)
+	return cur;
+
+
+    for (auto next = cur->FirstChildElement(); next ; next = next->NextSiblingElement())
+    {
+	result = FindElement(name,next);
+	if (result)
+	    return result;
+    }
+	
+    return result;
+}
+
 MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
     :Box(length, type, ifs)
 {
@@ -23,7 +44,7 @@ MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
 
 void MdatBox::writeimagefile(std::string fn, std::string type, std::string data)
 {
-    std::ofstream ofs(fn);
+    std::ofstream ofs(fn, std::ios_base::binary);
     ofs.open(fn);
     if (!ofs.is_open())
     {
@@ -46,34 +67,29 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
     
     std::string parseable((char*)buffer,length);
 
-    document.Parse(parseable.c_str());
+    document.Parse(parseable.c_str(),0,TIXML_ENCODING_UTF8);
 
     if (document.Error())
     {
 	throw XmlMdatParserException(document.ErrorDesc(),document.ErrorRow(),document.ErrorCol());
     }
 
-    // Document is a Node but not a element so its impracticle
-    // to use the NoChildren method, because I need Elements 
-    // int he for-loop.
-    TiXmlElement *element = document.FirstChildElement();
-    while (element)
-    {
-	if (element->ValueStr() == XMLIMAGEELEMENT)
-	    break;
-	element = element->FirstChildElement();
-    }
+    TiXmlElement *element = FindElement(XMLIMAGEELEMENT, document.RootElement());
 
     // Found images. 
     while (element)
     {
+	std::cout << "element: " << element->Value() << std::endl;
+
 	std::string fn;
 	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEIDATTR, &fn))
 	{ 
+	    throw XmlMdatParserException("image attribute not found", element->Row(), element->Column());
 	}
 	std::string type;
 	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGETYPEATTR, &type))
 	{
+	    throw XmlMdatParserException("image type attribute not found", element->Row(), element->Column());
 	}
 	std::string encoding;
 	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEENCODEDATTR, &encoding))
