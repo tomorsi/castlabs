@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <iterator>
 #include <locale>
 #include <fstream>
 
@@ -42,14 +43,16 @@ MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
 {
 }
 
-void MdatBox::writeimagefile(std::string fn, std::string type, std::string data)
+void MdatBox::writeimagefile(std::string fn, std::string type, std::vector<BYTE>& decoded)
 {
     std::ofstream ofs(tolower(fn)+"."+tolower(type), std::ios_base::binary);
     if (!ofs.is_open())
     {
 	throw std::invalid_argument("couldn't open file: " + fn);
     }
-    ofs.write(data.c_str(),data.length());
+
+    std::copy(decoded.begin(),decoded.end(), std::ostream_iterator<BYTE>(ofs));
+
     ofs.close();
 }
 
@@ -96,20 +99,17 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
 	    throw XmlMdatParserException("encoding attribute not found", element->Row(), element->Column());
 	}
 
-	std::cout << "a" << std::endl;
 	// if we are not base64 encoded skip this image, probably should log. 
 	if (tolower(encoding) == XMLIMAGEENCODEDATTRVALUE)
 	{
-	    std::cout << "b" << std::endl;
 	    std::string text = element->GetText();
-	    std::cout << "text: " << text << std::endl;
-	    writeimagefile(fn, type, text);
+	    std::vector<BYTE>  encoded = base64_decode(text);
+	    writeimagefile(fn, type, encoded);
 	}
 	else
 	{
 	    throw XmlMdatParserException("image encoding is not base64", element->Row(), element->Column());
 	}
-	std::cout << "c" << std::endl;
     	element = element->NextSiblingElement(XMLIMAGEELEMENT);
     }
 }

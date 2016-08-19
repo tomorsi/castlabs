@@ -1,6 +1,9 @@
 #ifndef __MDATBOX__H_
 #define __MDATBOX__H_
 
+#include <vector>
+
+#include "base64.h"
 #include "box.h"
 
 namespace castlabs {
@@ -18,7 +21,7 @@ class MdatBox : public Box
  public:
   MdatBox(int length, std::string boxtype, std::ifstream& ifs);
 
-  void writeimagefile(std::string fn, std::string type, std::string data);
+  void writeimagefile(std::string fn, std::string type, std::vector<BYTE>& decoded);
 
   void unmarshal(unsigned char *buffer, int length);
 
