@@ -12,14 +12,13 @@ class Box
  protected:
   const std::string m_boxtype;
   size_t m_length;
-  std::string m_xmldoc;
 
  public:
   // The size of the type and length in the 
   // file this need is dependent on the file structure. 
   static const int HEADERLENGTH = 8;
 
-  Box(int length, std::string type, std::ifstream& ifs);
+  Box(int length, std::string type);
 
   void read(std::ifstream& ifs);
 

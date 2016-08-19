@@ -21,9 +21,6 @@ static TiXmlElement* FindElement(std::string name, TiXmlElement* cur)
 {
     TiXmlElement *result = nullptr;
 
-    std::cout << "current element: " << cur->Value() << std::endl;
-    
-    
     if (cur->ValueStr()==name)
 	return cur;
 
@@ -38,8 +35,8 @@ static TiXmlElement* FindElement(std::string name, TiXmlElement* cur)
     return result;
 }
 
-MdatBox::MdatBox(int length, std::string type, std::ifstream& ifs)
-    :Box(length, type, ifs)
+MdatBox::MdatBox(int length, std::string type)
+    :Box(length, type)
 {
 }
 
@@ -63,13 +60,11 @@ void MdatBox::writeimagefile(std::string fn, std::string type, std::vector<BYTE>
 // filename, file type, and encoding. 
 void MdatBox::unmarshal(unsigned char *buffer, int length)
 {
-    std::cout << "Enter: MdatBox::unmarshal" << std::endl;
-
     TiXmlDocument document;
     
-    std::string parseable((char*)buffer,length);
+    m_xmldocument.assign((char*)buffer,length);
 
-    document.Parse(parseable.c_str(),0,TIXML_ENCODING_UTF8);
+    document.Parse(m_xmldocument.c_str(),0,TIXML_ENCODING_UTF8);
 
     if (document.Error())
     {
@@ -81,8 +76,6 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
     // Found images. 
     while (element)
     {
-	std::cout << "element: " << element->Value() << std::endl;
-
 	std::string fn;
 	if (TIXML_SUCCESS != element->QueryStringAttribute(XMLIMAGEIDATTR, &fn))
 	{ 
@@ -112,6 +105,13 @@ void MdatBox::unmarshal(unsigned char *buffer, int length)
 	}
     	element = element->NextSiblingElement(XMLIMAGEELEMENT);
     }
+}
+
+std::ostream& operator<<(std::ostream& ostrm, MdatBox& box)
+{
+    ostrm << (Box&) box;
+    ostrm << "[mdat] " << box.m_xmldocument << std::endl;
+    return ostrm;
 }
 
 const char *MdatBox::XMLIMAGEELEMENT = "smpte:image";

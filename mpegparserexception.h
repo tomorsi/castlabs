@@ -2,20 +2,9 @@
 #define __MPEG_PARSER_EXCEPTION__
 
 #include <fstream>
+#include <sstream>
 
 namespace castlabs {
-
-// The base class exception only tracks
-// the position in the stream that was 
-// unable to be parsed. 
-class MpegParserException
-{
- protected:
-  const std::streampos m_streampos;
-
- public:
-  MpegParserException(std::ifstream& s);
-};
 
 class XmlMdatParserException
 {
@@ -26,6 +15,12 @@ class XmlMdatParserException
 
  public:
   XmlMdatParserException(const char *description, int row, int column);
+
+  std::string description() {
+    std::ostringstream s;
+    s << "xml mdata parser exception[" << m_description << "] row: " << m_row << " column: " << m_column;
+    return s.str();
+  }
 
 };
 

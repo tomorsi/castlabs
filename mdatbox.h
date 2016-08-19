@@ -17,14 +17,17 @@ class MdatBox : public Box
   static const char *XMLIMAGETYPEATTR;
   static const char *XMLIMAGEENCODEDATTR;
   static const char *XMLIMAGEENCODEDATTRVALUE;
+  
+  std::string m_xmldocument;
 
  public:
-  MdatBox(int length, std::string boxtype, std::ifstream& ifs);
+  MdatBox(int length, std::string boxtype);
 
   void writeimagefile(std::string fn, std::string type, std::vector<BYTE>& decoded);
 
   void unmarshal(unsigned char *buffer, int length);
 
+  friend std::ostream& operator<<(std::ostream& ostrm, MdatBox& box);
 };
 
 }

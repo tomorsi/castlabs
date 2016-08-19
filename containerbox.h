@@ -8,7 +8,7 @@ namespace castlabs {
 class ContainerBox : public Box
 {
  public:
-  ContainerBox(int length, std::string type, std::ifstream& ifs);
+  ContainerBox(int length, std::string type);
 
   void read(std::ifstream& ) {
     // don't actuall read the data for the container, allow the recursion

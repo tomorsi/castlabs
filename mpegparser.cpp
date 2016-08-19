@@ -23,27 +23,26 @@ MpegParser::MpegParser(const std::string& filepath)
 // specifically. 
 void MpegParser::NextBox(int length, std::string type)
 {
-    std::cout << "length: " << length << " type: " << type << std::endl;
+    std::cout  << "[box] " ;
+    std::cout  << "type: " << type ;
+    std::cout  << " length: " << length << std::endl;
 
     if (type == "mdat")
     {
-	MdatBox box(length, type, m_ifstream);
+	MdatBox box(length, type);
 	box.read(m_ifstream);
 	HandleBox(box);
 
     }
     else if (type == "moof" || type == "traf")
     {
-	ContainerBox box(length, type, m_ifstream);
+	ContainerBox box(length, type);
 	box.read(m_ifstream);
 	HandleBox(box);
     }
     else
     {
-	// general box handler, throw away anything we are
-	// not interested in including just seeking over the 
-	// bytes in the file. 
-	m_ifstream.seekg(length, std::ios_base::cur);
+	m_ifstream.seekg(length,std::ios_base::cur);
     }
 
 }
@@ -71,21 +70,14 @@ void MpegParser::HandleBox(ContainerBox& box)
 	NextBox(childlen, childtype);
 	len = len - Box::HEADERLENGTH - childlen;
 
-	std::cout << "processed: " << childtype 
-		  << " remaining length: " << len
-		  << " current child length: " << childlen
-		  << std::endl;
     }
 
-    std::cout << "HandleContainer Exit" << std::endl;
 }
 
 // Start the parser if a parsing exception occurs
 // this method will throw an exception.
 void MpegParser::Parse(void)
 {
-    std::cout << "parse" << std::endl;
-
     int length = readlength();
     if (length < 0 ) 
 	return;
@@ -94,12 +86,9 @@ void MpegParser::Parse(void)
 
     while (length > 0)
     {
-	std::cout << "reading next" << std::endl;
 	NextBox(length,type);
 
 	length = readlength();
-
-	std::cout << "readlength(): " << length << std::endl;
 
 	if (length <= 0)
 	    break;
@@ -111,8 +100,6 @@ void MpegParser::Parse(void)
 int MpegParser::readlength(void)
 {
     int curpos = m_ifstream.tellg();
-
-    std::cout << "current position: " << curpos << std::endl;
 
     unsigned char lenbuf[4];
     m_ifstream.read((char*)lenbuf,4);

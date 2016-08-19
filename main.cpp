@@ -13,6 +13,14 @@ void help(void)
 
 }
 
+//
+// Bonus Questions:
+// 1. The MDAT is xml which tends to consume large amounts of space, the maximum length
+// that can be supported with this specification is a 4 bytes unsigned, or 4GB. 
+// 2. The code will extract and write to the file system the images, in our example
+// there are three. 
+// 
+
 int main(int argc, char *argv[])
 {
     int exitcode = 0;
@@ -39,12 +47,12 @@ int main(int argc, char *argv[])
     }
     catch (MpegParserException &e)
     {
-	std::cout << "MpegParserException: " << std::endl;
+	std::cout << e.description() << std::endl;
 	exitcode = -2;
     }
     catch (XmlMdatParserException &e)
     {
-	std::cout << "MdatXmlParserException: " << std::endl;
+	std::cout << e.description() << std::endl;
 	exitcode = -2;
     }
 
